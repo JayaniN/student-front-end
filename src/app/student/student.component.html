@@ -1,0 +1,89 @@
+<!-- <p>student works!</p> -->
+
+<style>
+  .wrapper {
+    width: 300px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .upload-btn {
+    background-color: #ff6358;
+    color: floralwhite;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    margin-top: 40px;
+    z-index: 1;
+  }
+
+  .clear-btn {
+    position: absolute;
+    right: 80px;
+    bottom: 10px;
+  }
+</style>
+
+<div class="wrapper">
+  <kendo-fileselect #myFileSelect="kendoFileSelect">
+    <ng-template kendoUploadFileInfoTemplate let-files let-state="state">
+      <div>
+      <div class="row"> {{ files[0].name }} </div>
+      <div class="row">
+        <button
+          *ngIf="showButton(state)"
+          (click)="upload(myFileSelect, files[0])"
+          class="k-button upload-btn"
+        >
+          Upload
+        </button>
+        <button
+          *ngIf="showButton(state)"
+          (click)="remove(myFileSelect, files[0].uid)"
+          class="k-button clear-btn"
+        >
+          Clear
+        </button>
+      </div>
+    </div>
+    </ng-template>
+  </kendo-fileselect>
+</div>
+
+<kendo-grid
+  [data]="studentGridDataList"
+  [height]="533"
+  [pageSize]="gridState.take"
+  [skip]="gridState.skip"
+  [sort]="gridState.sort"
+  [pageable]="true"
+  [sortable]="true"
+  (dataStateChange)="onStateChange($event)"
+  (edit)="editHandler($event)"
+  (cancel)="cancelHandler($event)"
+  (save)="saveHandler($event)"
+  (remove)="removeHandler($event)"
+  (add)="addHandler($event)"
+  [navigable]="true"
+> 
+
+  <ng-template kendoGridToolbarTemplate>
+    <button kendoGridAddCommand [primary]="true"> Add Student </button> 
+  </ng-template>
+  
+  <kendo-grid-column field="name" title="Student Name"></kendo-grid-column>
+  <kendo-grid-column field="email" title="Email"></kendo-grid-column>
+  <kendo-grid-column field="dateOfBirth" title="Date Of Birth" editor="date"></kendo-grid-column>
+  <kendo-grid-column field="age" title="Age"></kendo-grid-column>
+
+  <kendo-grid-command-column title="Action" [width]="300">
+    <ng-template kendoGridCellTemplate let-isNew="isNew">
+      <button kendoGridEditCommand [primary]="true" icon="edit"> Edit </button>
+      <button kendoGridRemoveCommand icon="delete"> Remove </button>
+      <button kendoGridSaveCommand [disabled]="formGroup?.invalid" icon="check" [primary]="true" style="margin-left: 0px;"> {{ isNew ? "Add" : "Update" }} </button>
+      <button kendoGridCancelCommand icon="cancel"> {{ isNew ? "Discard changes" : "Cancel" }} </button>
+    </ng-template>
+  </kendo-grid-command-column>
+</kendo-grid>
+
+<div kendoDialogContainer></div>
